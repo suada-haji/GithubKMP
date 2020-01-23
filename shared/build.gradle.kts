@@ -32,6 +32,10 @@ kotlin {
 }
 
 val packForXcode by tasks.creating(Sync::class) {
+    /**
+     * Sets a directory for the framework and determines the correct framework to build based on the
+     * selected target in the Xcode projetc, with a default of DEBUG
+     */
     val targetDir = File(buildDir, "xcode-frameworks")
 
     /// selecting the right configuration for the iOS
@@ -44,10 +48,18 @@ val packForXcode by tasks.creating(Sync::class) {
     inputs.property("mode", mode)
     dependsOn(framework.linkTask)
 
+    /**
+     * Copies the files from the build directory into the framework directory
+     */
     from({ framework.outputDirectory })
     into(targetDir)
 
     /// generate a helpful ./gradlew wrapper with embedded Java path
+    /**
+     * a bash script named gradlew is created in the framework directory the Xcode will call to build
+     * the shared framework.
+     * The script uses the version of the JDK that's embedded in Android Studio
+     */
     doLast {
         val gradlew = File(targetDir, "gradlew")
         gradlew.writeText("#!/bin/bash\n"
@@ -57,5 +69,5 @@ val packForXcode by tasks.creating(Sync::class) {
         gradlew.setExecutable(true)
     }
 }
-
+// specify that the shared code build task depends on the packForXcode task
 tasks.getByName("build").dependsOn(packForXcode)
