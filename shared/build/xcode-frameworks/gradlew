@@ -1,0 +1,4 @@
+#!/bin/bash
+export 'JAVA_HOME=/Applications/Android Studio 4.0 Preview.app/Contents/jre/jdk/Contents/Home/jre'
+cd '/Users/suadahaji/Documents/multiplartform/GithubKMP'
+./gradlew $@
